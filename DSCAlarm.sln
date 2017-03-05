@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSCAlarm", "DSCAlarm\DSCAlarm.csproj", "{3F6D8EEB-CA6F-4131-B1D6-4A19F24FA07F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External Resources", "External Resources", "{462835ED-0B6C-4C2B-B784-58C637ABFDCF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
