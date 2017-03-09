@@ -30,11 +30,8 @@ namespace DSCAlarm
     {
 
         private SerialPort _sPort = new SerialPort();
-        private delegate void AccessFormMarshalDelegate(string action);
-        private delegate void EllipseDelegate(string action);
-
-
-
+        private bool _done = false;
+        private readonly object doneLock = new object();
 
         public MainWindow()
         {
@@ -61,9 +58,8 @@ namespace DSCAlarm
 
         // Connect / Disconnect
         // Method to connect or disconnect to a selected COM port
-        private void button_Click(object sender, RoutedEventArgs e)
+        private async void button_Click(object sender, RoutedEventArgs e)
         {
-
             if (this.comboBox.Text == "")
             {
                 MessageBox.Show("Please select a COM port!");
@@ -80,15 +76,41 @@ namespace DSCAlarm
                 this._sPort.BaudRate = int.Parse(this.comboBox2.Text);
                 this._sPort.Parity = Parity.None;
                 this._sPort.StopBits = StopBits.One;
-                this._sPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
                 try
                 {
                     this._sPort.Open();
                     this.button.Content = "Disconnect";
+                    lock (this.doneLock)
+                    {
+                        this._done = false;
+                    }
                     Log("Connected to: " + this.comboBox.Text);
                     Log("BaudRate  to: " + this.comboBox2.Text);
 
+                    while (true)
+                    {
+                        bool iAmDone;
+                        lock (this.doneLock)
+                        {
+                            iAmDone = this._done;
+                        }
+
+                        if (!iAmDone && this._sPort.BaseStream.CanRead)
+                        {
+                            byte[] buffer = new byte[4096];
+                            int bytesRead = await this._sPort.BaseStream.ReadAsync(buffer, 0, 4096);
+                            if (bytesRead > 0)
+                            {
+                                string foo = Encoding.UTF8.GetString(buffer);
+                                DataReceivedHandler(foo);
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
                 catch (Exception exc)
                 {
@@ -102,6 +124,10 @@ namespace DSCAlarm
                 try
                 {
                     this._sPort.Close();
+                    lock (this.doneLock)
+                    {
+                        this._done = true;
+                    }
                     this.button.Content = "Connect";
                     Log("Disconnected");
                 }
@@ -114,16 +140,15 @@ namespace DSCAlarm
         }
 
         // Watching received serial Data
-        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        private void DataReceivedHandler(string indata)
         {
 
-            AccessFormMarshal("\r\n###############################\r");
+            AccessFormAppendTextBox("\r\n###############################\r");
 
-            string indata = this._sPort.ReadExisting();
             //string msg = "Data Received in Str: " + indata;
 
             // Update Zone Status
-            updateZoneStatus(indata);
+            AccessEllipse(indata);
 
             char[] values = indata.ToCharArray();
             string hexOutput = "";
@@ -137,20 +162,20 @@ namespace DSCAlarm
             }
             try
             {
-                AccessFormMarshal("Data Received in Dec: " + DecOutput.Substring(0, DecOutput.Length - 1) + "\r");
-                AccessFormMarshal("Data Received in Hex: " + hexOutput.Substring(0, hexOutput.Length - 1) + "\r");
-                AccessFormMarshal("Data Received in Str: " + indata);
+                AccessFormAppendTextBox("Data Received in Dec: " + DecOutput.Substring(0, DecOutput.Length - 1) + "\r");
+                AccessFormAppendTextBox("Data Received in Hex: " + hexOutput.Substring(0, hexOutput.Length - 1) + "\r");
+                AccessFormAppendTextBox("Data Received in Str: " + indata);
             }
             catch (Exception exc)
             {
                 //AccessFormMarshal("Data Received in Dec: " + "Cannot trim received data" + "\r");
                 //AccessFormMarshal("Data Received in Hex: " + "Cannot trim received data" + "\r");
-                AccessFormMarshal("Weird Data Received in Str: " + indata);
+                AccessFormAppendTextBox("Weird Data Received in Str: " + indata);
             }
             //AccessFormMarshal("Data Received in Dec: " + DecOutput.Substring(0, DecOutput.Length - 1) + "\r");
             //AccessFormMarshal("Data Received in Hex: " + hexOutput.Substring(0, hexOutput.Length - 1) + "\r");
             //AccessFormMarshal("Data Received in Str: " + indata);
-            AccessFormMarshal("###############################\r\n");
+            AccessFormAppendTextBox("###############################\r\n");
             //(this.Parent as form)
             //Console.WriteLine("Data Received:");
             //Console.Write(indata);
@@ -162,19 +187,6 @@ namespace DSCAlarm
             this.richTextBox.AppendText(data);
             this.richTextBox.ScrollToEnd();
             Log(data);
-        }
-
-        // Dispatching Delegate
-        private void AccessFormMarshal(string action)
-        {
-            MainWindow.AccessFormMarshalDelegate AccessFormMarshalDelegate = new MainWindow.AccessFormMarshalDelegate(this.AccessFormAppendTextBox);
-            
-            object[] args = new object[]
-            {
-                action
-            };
-
-            base.Dispatcher.Invoke(AccessFormMarshalDelegate, args);
         }
 
         // Clear richtextBox
@@ -380,20 +392,6 @@ namespace DSCAlarm
 
         //    }
         //}
-
-        // Update Zone Status
-        private void updateZoneStatus(string indata)
-        {
-            MainWindow.EllipseDelegate AccessEllipseDelegate = new MainWindow.EllipseDelegate(this.AccessEllipse);
-
-            object[] args = new object[]
-            {
-                indata
-            };
-
-            base.Dispatcher.Invoke(AccessEllipseDelegate, args);
-
-        }
 
         private void AccessEllipse(string indata)
         {
