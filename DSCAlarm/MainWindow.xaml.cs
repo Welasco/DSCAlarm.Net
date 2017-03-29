@@ -494,6 +494,7 @@ namespace DSCAlarm
             // 13 = D  = CR;
             // 10 = A  = LF;
 
+
             decimal decValue = 0;
             Byte[] arrChar = new byte[cmd.Length + 4];
             int i = 0;
