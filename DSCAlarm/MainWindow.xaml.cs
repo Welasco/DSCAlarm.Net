@@ -522,5 +522,57 @@ namespace DSCAlarm
             return arrChar;
 
         }
+
+        private void button5_Click(object sender, RoutedEventArgs e)
+        {
+            if (button.Content.ToString() == "Disconnect")
+            {
+                if (textBox1.Text != "" && textBox1.Text != null)
+                {
+                    try
+                    {
+                        //# Alarm Arm Stay
+                        //[Byte[]] $request = 48,51,49,49,67,53,13,10
+                        // 0401180600F4
+                        this._sPort.DiscardOutBuffer();
+
+                        //string disarmCMD = "0401180600";
+                        string txtCMD = textBox1.Text;
+                        Byte[] disarmAlarm = PrepareCommand(txtCMD);
+
+                        this._sPort.Write(disarmAlarm, 0, disarmAlarm.Length);
+                        var unsignedBytes = new byte[disarmAlarm.Length];
+                        Buffer.BlockCopy(disarmAlarm, 0, unsignedBytes, 0, disarmAlarm.Length);
+
+                        string disarmAlarmDecStr = "";
+
+                        foreach (var item in disarmAlarm)
+                        {
+                            disarmAlarmDecStr = disarmAlarmDecStr + item.ToString() + "-";
+                        }
+                        AccessFormAppendTextBox("\r\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\r");
+                        AccessFormAppendTextBox("Data sent in Dec: " + disarmAlarmDecStr.Substring(0, disarmAlarmDecStr.Length - 1) + "\r");
+                        AccessFormAppendTextBox("Data sent in Hex: " + BitConverter.ToString(disarmAlarm) + "\r");
+                        AccessFormAppendTextBox("Data sent in Str: " + System.Text.Encoding.ASCII.GetString(disarmAlarm));
+                        AccessFormAppendTextBox("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\r\n");
+                        //AccessFormAppendTextBox(BitConverter.ToString(disarmAlarm) + "\r");
+                    }
+                    catch (Exception exc)
+                    {
+                        Log("Faild to send Serial Data: " + exc.Message);
+                        MessageBox.Show("Faild to send Serial Data: " + exc.Message);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please type a command to be send.");
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("You are not connected to a serial port.");
+            }
+        }
     }
 }
