@@ -20,16 +20,18 @@
         <Button x:Name="button2" Content="ArmAway" HorizontalAlignment="Left" Margin="49,323,0,0" VerticalAlignment="Top" Width="91" Height="57" FontSize="16" Background="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" Click="button2_Click"/>
         <Button x:Name="button3" Content="ArmStay" HorizontalAlignment="Left" Margin="49,399,0,0" VerticalAlignment="Top" Width="91" Height="57" FontSize="16" Background="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" Click="button3_Click"/>
         <Button x:Name="button4" Content="Disarm" HorizontalAlignment="Left" Margin="49,475,0,0" VerticalAlignment="Top" Width="91" Height="57" FontSize="16" Background="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" Click="button4_Click"/>
-        <GroupBox x:Name="groupBox3" Header="Alarm Status" Margin="346,10,10,10" FontSize="16"/>
-        <RichTextBox x:Name="richTextBox" HorizontalAlignment="Left" Height="596.5" Margin="366,142,0,0" VerticalAlignment="Top" Width="901" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
+        <GroupBox x:Name="groupBox3" Header="Alarm Status" Margin="346,10,10,10" FontSize="16">
+            <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="31" Margin="163,658,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="246" FontSize="20"/>
+        </GroupBox>
+        <RichTextBox x:Name="richTextBox" HorizontalAlignment="Left" Height="596" Margin="366,64,0,0" VerticalAlignment="Top" Width="901" VerticalScrollBarVisibility="Auto" IsReadOnly="True">
             <FlowDocument>
                 <Paragraph>
                     <Run Text=""/>
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>
-        <Button x:Name="button1" Content="Clear" HorizontalAlignment="Left" Margin="366,49,0,0" VerticalAlignment="Top" Width="91" Height="57" Click="button1_Click" Background="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" FontSize="16"/>
-        <Label x:Name="label" Content="Data Sent and Received" HorizontalAlignment="Left" Margin="360,107,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <Button x:Name="button1" Content="Clear" HorizontalAlignment="Left" Margin="1158,679,0,0" VerticalAlignment="Top" Width="91" Height="57" Click="button1_Click" Background="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" FontSize="16"/>
+        <Label x:Name="label" Content="Data Sent and Received" HorizontalAlignment="Left" Margin="360,29,0,0" VerticalAlignment="Top" FontSize="20"/>
         <TextBox x:Name="textBox_Copy" HorizontalAlignment="Left" Height="23" Margin="30,81,0,0" TextWrapping="Wrap" Text="Baud Rate:" VerticalAlignment="Top" Width="127" BorderThickness="0" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" FontSize="16"/>
         <ComboBox x:Name="comboBox2" HorizontalAlignment="Left" Margin="169,77,0,0" VerticalAlignment="Top" Width="131" Height="34" FontSize="20">
             <ComboBoxItem Content="9600" IsSelected="True"></ComboBoxItem>
@@ -51,5 +53,6 @@
         <Label x:Name="labelZone3" Content="4" HorizontalAlignment="Left" Margin="55,692,0,0" VerticalAlignment="Top"/>
         <Label x:Name="labelZone4" Content="5" HorizontalAlignment="Left" Margin="162,692,0,0" VerticalAlignment="Top"/>
         <Label x:Name="labelZone5" Content="6" HorizontalAlignment="Left" Margin="268,692,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="button5" Content="SEND" HorizontalAlignment="Left" Margin="389,679,0,0" VerticalAlignment="Top" Width="91" Height="57" FontSize="16" Background="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}" Click="button5_Click"/>
     </Grid>
 </Window>
